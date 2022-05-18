@@ -59,6 +59,15 @@ class MainActivity : BaseActivity() {
         binding.buttonCamera.setOnClickListener{
             requirePermissions(arrayOf(Manifest.permission.CAMERA), PERMISSION_CAMERA)
         }
+        binding.buttonGallery.setOnClickListener{
+            openGallery()
+        }
+    }
+
+    private fun openGallery() {
+      val intent = Intent(Intent.ACTION_PICK)
+        intent.type = MediaStore.Images.Media.CONTENT_TYPE
+        galleryResultLauncher.launch(intent)
     }
 
     private fun openCamera() {
@@ -117,5 +126,13 @@ class MainActivity : BaseActivity() {
             e.printStackTrace()
         }
         return image
+    }
+
+    private val galleryResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode == RESULT_OK) {
+            result.data?.data.let { uri ->
+                binding.imagePreview.setImageURI(uri)
+            }
+        }
     }
 }
